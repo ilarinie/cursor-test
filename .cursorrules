@@ -1,8 +1,18 @@
 # Code Review Rules for Bugbot
 
+## CRITICAL VIOLATIONS - Must Always Flag
+
+These violations MUST be flagged in every code review:
+
+1. **Class Usage**: ANY use of the `class` keyword is a violation
+2. **File Naming**: Files must use kebab-case (flag camelCase, PascalCase, snake_case)
+3. **TSDoc Accuracy**: TSDoc must accurately describe implementation - flag mismatches
+4. **Parameter Naming**: Parameters must use camelCase (first letter lowercase)
+
 ## Security Checks
 
 ### 1. Security Vulnerabilities
+
 - Check for SQL injection vulnerabilities in database queries
 - Verify no hardcoded secrets, API keys, or passwords in code
 - Ensure input validation and sanitization for user inputs
@@ -15,6 +25,7 @@
 - Review error messages to ensure they don't leak sensitive information
 
 ### 2. Environment Variables and Constants
+
 - Flag any hardcoded URLs, API endpoints, or configuration values
 - Check for magic strings that should be environment variables
 - Verify sensitive configuration is loaded from environment variables
@@ -24,6 +35,7 @@
 - Flag any configuration values that differ between environments
 
 ### 3. Documentation (TSDoc)
+
 - Require TSDoc comments on all exported functions, classes, and interfaces
 - Require TSDoc comments on complex algorithms or business logic
 - Require TSDoc comments on functions with non-obvious behavior
@@ -33,8 +45,15 @@
 - Flag missing parameter descriptions in TSDoc
 - Flag missing return type descriptions in TSDoc
 - Flag missing @throws documentation for functions that can throw
+- **CRITICAL: Verify TSDoc comments accurately describe the actual implementation**
+  - Flag TSDoc that mentions operations not present in code (e.g., "from DB" when no database access exists)
+  - Flag TSDoc with incorrect parameter descriptions (e.g., describing input as output, or vice versa)
+  - Flag TSDoc that describes functionality that doesn't match the code implementation
+  - Verify @param names match actual parameter names exactly (case-sensitive)
+  - Verify @returns description matches what the function actually returns
 
 ### 4. Single Responsibility Principle
+
 - Each function should do one thing and do it well
 - Functions should not exceed 50 lines (flag if longer and suggest refactoring)
 - Classes should have a single, well-defined purpose
@@ -47,28 +66,39 @@
 ## Code Style
 
 ### 1. File Naming
-- All files must use kebab-case naming convention
-- Examples: `user-service.ts`, `api-client.ts`, `data-utils.ts`
-- Flag any files using camelCase, PascalCase, or snake_case
+
+- **CRITICAL: All files must use kebab-case naming convention**
+- Examples of CORRECT naming: `user-service.ts`, `api-client.ts`, `data-utils.ts`
+- Examples of VIOLATIONS to flag:
+  - `imageResizer.ts` (camelCase) → should be `image-resizer.ts`
+  - `ImageResizer.ts` (PascalCase) → should be `image-resizer.ts`
+  - `image_resizer.ts` (snake_case) → should be `image-resizer.ts`
+- Flag any files using camelCase, PascalCase, or snake_case - this is a mandatory violation
 - TypeScript files should end with `.ts` or `.tsx`
 - Test files should follow pattern: `*.test.ts` or `*.spec.ts`
 
 ### 2. Functions and Classes
+
+- **CRITICAL: NEVER use classes - this is a hard rule violation**
+  - Flag ANY occurrence of the `class` keyword as a violation
+  - Example violation: `class MyClass { }` - MUST be flagged
+  - Suggest converting to functional pattern using arrow functions and objects
 - Always use arrow functions for function declarations
-- Never use classes - use functions and objects instead
 - Prefer function expressions over function declarations
 - Use const for function assignments: `const myFunction = () => {}`
-- Flag any use of `class` keyword
+- Flag any use of `class` keyword - this is a mandatory violation
 - Flag any use of `function` keyword (prefer arrow functions)
-- Suggest converting classes to functional patterns
+- When flagging class usage, provide specific suggestion: "Replace class with arrow function and object pattern"
 
 ### 3. Variable Naming
+
 - Variable names must be descriptive and meaningful
-- Use camelCase for variables and functions
+- Use camelCase for variables and functions (first letter lowercase)
 - Use UPPER_SNAKE_CASE for constants
 - Flag single-letter variable names (except in loops: i, j, k)
 - Flag abbreviations that are not commonly understood
 - Flag variables with unclear or generic names (data, temp, obj, etc.)
+- Flag parameter names that don't follow camelCase (e.g., `InputPath` should be `inputPath`)
 - Ensure boolean variables start with is/has/should/can (e.g., `isValid`, `hasPermission`)
 - Ensure function names are verbs (e.g., `getUser`, `calculateTotal`)
 - Flag variables that don't match their usage or purpose
@@ -82,3 +112,28 @@
 - Check for memory leaks in long-running processes
 - Verify proper cleanup of resources (file handles, connections, etc.)
 
+## Review Checklist for Each File
+
+For every file reviewed, systematically check:
+
+1. **File Naming**: Does the filename use kebab-case? If not, FLAG IT.
+2. **Class Usage**: Search for `class` keyword. If found, FLAG IT as violation.
+3. **Function Declarations**: Search for `function` keyword. If found, suggest arrow function.
+4. **TSDoc Accuracy**:
+   - Read each TSDoc comment
+   - Compare with actual code implementation
+   - Flag if TSDoc mentions operations not in code (e.g., "from DB", "fetches from API")
+   - Flag if parameter descriptions don't match actual parameters
+   - Flag if return descriptions don't match what function returns
+5. **Variable Naming**: Check all parameters use camelCase (first letter lowercase)
+6. **Constants**: Check constants use UPPER_SNAKE_CASE
+
+## Example Violations to Flag
+
+Based on current codebase, these specific violations should be flagged:
+
+- `class ImageResizer` → VIOLATION: Classes are not allowed
+- `imageResizer.ts` → VIOLATION: Should be `image-resizer.ts` (kebab-case)
+- TSDoc saying "from DB" when no database code exists → VIOLATION: Inaccurate documentation
+- Parameter `InputPath` → VIOLATION: Should be `inputPath` (camelCase)
+- TSDoc describing parameter as "output file path" when it's actually input → VIOLATION: Incorrect description
