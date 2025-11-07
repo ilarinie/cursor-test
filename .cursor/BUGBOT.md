@@ -137,3 +137,4 @@ Based on current codebase, these specific violations should be flagged:
 - TSDoc saying "from DB" when no database code exists → VIOLATION: Inaccurate documentation
 - Parameter `InputPath` → VIOLATION: Should be `inputPath` (camelCase)
 - TSDoc describing parameter as "output file path" when it's actually input → VIOLATION: Incorrect description
+
