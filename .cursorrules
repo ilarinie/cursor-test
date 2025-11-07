@@ -1,0 +1,84 @@
+# Code Review Rules for Bugbot
+
+## Security Checks
+
+### 1. Security Vulnerabilities
+- Check for SQL injection vulnerabilities in database queries
+- Verify no hardcoded secrets, API keys, or passwords in code
+- Ensure input validation and sanitization for user inputs
+- Check for XSS vulnerabilities in web applications
+- Verify proper authentication and authorization checks
+- Review dependencies for known security vulnerabilities (use npm audit, etc.)
+- Check for unsafe file operations (path traversal, etc.)
+- Verify HTTPS is used for external requests
+- Check for insecure random number generation
+- Review error messages to ensure they don't leak sensitive information
+
+### 2. Environment Variables and Constants
+- Flag any hardcoded URLs, API endpoints, or configuration values
+- Check for magic strings that should be environment variables
+- Verify sensitive configuration is loaded from environment variables
+- Flag hardcoded credentials, tokens, or API keys
+- Check for hardcoded file paths that should be configurable
+- Ensure constants are defined at the top of files or in a constants file
+- Flag any configuration values that differ between environments
+
+### 3. Documentation (TSDoc)
+- Require TSDoc comments on all exported functions, classes, and interfaces
+- Require TSDoc comments on complex algorithms or business logic
+- Require TSDoc comments on functions with non-obvious behavior
+- Require TSDoc comments on functions with multiple parameters
+- Require TSDoc comments on functions that throw errors
+- Require TSDoc comments on public APIs
+- Flag missing parameter descriptions in TSDoc
+- Flag missing return type descriptions in TSDoc
+- Flag missing @throws documentation for functions that can throw
+
+### 4. Single Responsibility Principle
+- Each function should do one thing and do it well
+- Functions should not exceed 50 lines (flag if longer and suggest refactoring)
+- Classes should have a single, well-defined purpose
+- Modules should have a clear, single responsibility
+- Flag functions that perform multiple unrelated operations
+- Suggest splitting large functions into smaller, focused functions
+- Check that functions are not doing both data fetching and data transformation
+- Verify that error handling is separated from business logic where appropriate
+
+## Code Style
+
+### 1. File Naming
+- All files must use kebab-case naming convention
+- Examples: `user-service.ts`, `api-client.ts`, `data-utils.ts`
+- Flag any files using camelCase, PascalCase, or snake_case
+- TypeScript files should end with `.ts` or `.tsx`
+- Test files should follow pattern: `*.test.ts` or `*.spec.ts`
+
+### 2. Functions and Classes
+- Always use arrow functions for function declarations
+- Never use classes - use functions and objects instead
+- Prefer function expressions over function declarations
+- Use const for function assignments: `const myFunction = () => {}`
+- Flag any use of `class` keyword
+- Flag any use of `function` keyword (prefer arrow functions)
+- Suggest converting classes to functional patterns
+
+### 3. Variable Naming
+- Variable names must be descriptive and meaningful
+- Use camelCase for variables and functions
+- Use UPPER_SNAKE_CASE for constants
+- Flag single-letter variable names (except in loops: i, j, k)
+- Flag abbreviations that are not commonly understood
+- Flag variables with unclear or generic names (data, temp, obj, etc.)
+- Ensure boolean variables start with is/has/should/can (e.g., `isValid`, `hasPermission`)
+- Ensure function names are verbs (e.g., `getUser`, `calculateTotal`)
+- Flag variables that don't match their usage or purpose
+
+## Additional Review Guidelines
+
+- Check for unused imports and variables
+- Verify proper error handling (try-catch blocks where needed)
+- Check for proper TypeScript types (avoid `any` unless necessary)
+- Verify async/await is used correctly
+- Check for memory leaks in long-running processes
+- Verify proper cleanup of resources (file handles, connections, etc.)
+
