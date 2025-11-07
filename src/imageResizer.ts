@@ -47,9 +47,9 @@ class ImageResizer {
   }
 
   /**
-   * Gets a default input path for resized images from DB
+   * Generates a default output path for resized images based on the input path.
    *
-   * @param inputPath - The output file path
+   * @param inputPath - The input file path
    * @returns The output path with 'resized-' prefix
    */
   private getDefaultOutputPath(inputPath: string): string {
